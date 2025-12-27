@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Horizon - Create Account</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><rect width=%2224%22 height=%2224%22 rx=%226%22 fill=%22%232563EB%22/><g transform=%22scale(0.8) translate(3,3)%22 stroke=%22white%22 stroke-width=%222%22 fill=%22none%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><circle cx=%2212%22 cy=%225%22 r=%223%22/><line x1=%2212%22 y1=%2222%22 x2=%2212%22 y2=%228%22/><path d=%22M5 12H2a10 10 0 0 0 20 0h-3%22/></g></svg>" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        safelist: [
+          'animate-gradient-x',
+          'bg-gradient-to-r',
+          'from-blue-600',
+          'to-indigo-600',
+          'bg-[length:200%_200%]'
+        ],
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              blue: {
+                50: '#e6effe',
+                100: '#cde0fe',
+                200: '#9bc1fd',
+                300: '#69a1fc',
+                400: '#3782fb',
+                500: '#0563fa',
+                600: '#044fc8',
+                700: '#033b96',
+                800: '#022864',
+                900: '#011432',
+                950: '#010e23'
+              }
+            },
+            animation: {
+              'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+              'fade-in-down': 'fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+              'gradient-x': 'gradient-x 3s ease infinite',
+              'float': 'float 8s ease-in-out infinite',
+              'float-delayed': 'float 8s ease-in-out 4s infinite',
+              'grid-move': 'grid-move 20s linear infinite',
+              'pulse-glow': 'pulse-glow 4s ease-in-out infinite',
+              'scale-pulse': 'scale-pulse 3s ease-in-out infinite',
+            },
+            keyframes: {
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(30px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              fadeInDown: {
+                '0%': { opacity: '0', transform: 'translateY(-30px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              'grid-move': {
+                '0%': { backgroundPosition: '0 0' },
+                '100%': { backgroundPosition: '0 50px' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0) scale(1)' },
+                '50%': { transform: 'translateY(-20px) scale(1.05)' },
+              },
+              'gradient-x': {
+                '0%, 100%': {
+                  'background-size': '200% 200%',
+                  'background-position': 'left center'
+                },
+                '50%': {
+                  'background-size': '200% 200%',
+                  'background-position': 'right center'
+                },
+              },
+              'scale-pulse': {
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.05)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent; 
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #94a3b8;
+        border-radius: 3px;
+      }
+      .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #334155;
+      }
+
+      /* Fix for theme transition flicker */
+      html, body {
+        background-color: transparent;
+      }
+      .dark {
+        background-color: #020617;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "react-hot-toast": "https://aistudiocdn.com/react-hot-toast@^2.4.1",
+    "three": "https://esm.sh/three@^0.182.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+  </body>
+</html>
