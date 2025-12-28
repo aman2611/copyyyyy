@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   MoreHorizontal, Clock, Wifi, Shield, FileText, Filter, Search
@@ -26,6 +27,15 @@ const DispensationBoard: React.FC = () => {
       }
   };
 
+  const getStandardTitle = (type: string) => {
+      switch(type) {
+          case 'INTERNET': return 'Internet Connectivity Request';
+          case 'USB': return 'Removable Media Access';
+          case 'ACCESS': return 'Physical Access Control';
+          default: return 'Dispensation Request';
+      }
+  };
+
   const renderColumn = (id: string, title: string, items: KanbanItem[], colorClass: string) => (
     <div className="flex-shrink-0 w-80 flex flex-col h-full">
         {/* Column Header */}
@@ -40,7 +50,7 @@ const DispensationBoard: React.FC = () => {
 
         {/* Droppable Area */}
         <div className="flex-1 p-3 space-y-3 overflow-y-auto custom-scrollbar border-x border-b rounded-b-2xl bg-slate-50/50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5">
-            {items.filter(i => i.title.toLowerCase().includes(searchTerm.toLowerCase())).map(item => (
+            {items.filter(i => i.id.toLowerCase().includes(searchTerm.toLowerCase()) || i.requester.toLowerCase().includes(searchTerm.toLowerCase())).map(item => (
                 <div key={item.id} className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-md cursor-pointer group transition-all hover:scale-[1.02]">
                     <div className="flex justify-between items-start mb-2">
                         <span className="text-[10px] font-mono font-bold text-slate-400">{item.id}</span>
@@ -48,7 +58,7 @@ const DispensationBoard: React.FC = () => {
                             <Clock size={10} /> {item.date}
                         </div>
                     </div>
-                    <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-3 leading-tight">{item.title}</h4>
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-3 leading-tight">{getStandardTitle(item.type)}</h4>
                     
                     <div className="flex items-center gap-2 mb-3">
                         <div className="w-6 h-6 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-600 dark:to-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-600 dark:text-slate-200">
@@ -63,7 +73,7 @@ const DispensationBoard: React.FC = () => {
                     <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-white/5">
                         <div className="flex items-center gap-1.5 text-xs text-slate-500">
                              {getTypeIcon(item.type)}
-                             <span className="capitalize text-[10px]">{item.type.toLowerCase()} Request</span>
+                             <span className="capitalize text-[10px]">{item.type.toLowerCase()}</span>
                         </div>
                     </div>
                 </div>
@@ -91,7 +101,7 @@ const DispensationBoard: React.FC = () => {
                     <Search className="absolute left-3 top-2.5 text-slate-400" size={16} />
                     <input 
                         type="text" 
-                        placeholder="Search board..." 
+                        placeholder="Search by ID or Requester..." 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-9 pr-4 py-2 bg-white dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"

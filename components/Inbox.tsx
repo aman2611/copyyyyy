@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  Search, Filter, Clock, ChevronRight, Inbox as InboxIcon, Send, User 
+  Search, Filter, Clock, ChevronRight, Inbox as InboxIcon, Send, User, FileText, Shield, Laptop, AlertCircle
 } from 'lucide-react';
 import Loader from './Loader';
 import Badge from './Badge';
@@ -41,8 +41,11 @@ const Inbox: React.FC<InboxProps> = ({ mode = 'Inbox', filterType = 'All', onVie
       const isPending = req.status === 'Pending';
       const matchesView = mode === 'Inbox' ? isPending : !isPending;
       
-      // 2. Search Logic
-      const matchesSearch = req.title.toLowerCase().includes(searchTerm.toLowerCase()) || req.requester.name.toLowerCase().includes(searchTerm.toLowerCase()) || req.id.toLowerCase().includes(searchTerm.toLowerCase());
+      // 2. Search Logic (Removed Title, added Summary/ID search)
+      const matchesSearch = 
+        req.id.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        req.requester.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        req.summary.toLowerCase().includes(searchTerm.toLowerCase());
       
       // 3. Status Filter (Local)
       const matchesStatus = statusFilter === 'All' || req.status === statusFilter;
@@ -54,6 +57,24 @@ const Inbox: React.FC<InboxProps> = ({ mode = 'Inbox', filterType = 'All', onVie
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
     return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(date);
+  };
+
+  const getCategoryLabel = (type: string) => {
+      switch(type) {
+          case 'Laptop': return 'Hardware Procurement';
+          case 'Dispensation': return 'Security Dispensation';
+          case 'Policy': return 'Policy Compliance';
+          default: return 'General Request';
+      }
+  };
+
+  const getTypeIcon = (type: string) => {
+      switch(type) {
+          case 'Laptop': return Laptop;
+          case 'Dispensation': return Shield;
+          case 'Policy': return FileText;
+          default: return AlertCircle;
+      }
   };
 
   if (isLoading) {
@@ -80,7 +101,7 @@ const Inbox: React.FC<InboxProps> = ({ mode = 'Inbox', filterType = 'All', onVie
           <Search className="absolute left-3 top-2.5 text-slate-400" size={18} />
           <input 
             type="text" 
-            placeholder="Search ID, title or personnel..." 
+            placeholder="Search ID, content or personnel..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none dark:text-white placeholder-slate-400"
@@ -114,43 +135,56 @@ const Inbox: React.FC<InboxProps> = ({ mode = 'Inbox', filterType = 'All', onVie
       {/* LIST CONTENT */}
       <div className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm flex flex-col overflow-hidden">
           <div className="flex-1 overflow-y-auto custom-scrollbar">
-            {filteredRequests.map(req => (
-              <div 
-                key={req.id}
-                onClick={() => onViewRequest && onViewRequest(req.id)}
-                className="p-5 border-b border-slate-100 dark:border-white/5 cursor-pointer transition-all hover:bg-slate-50 dark:hover:bg-white/5 group"
-              >
-                <div className="flex items-center gap-6">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold shadow-sm border border-slate-200 dark:border-white/10 group-hover:scale-105 transition-transform">
-                        {req.requester.avatar}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-col md:flex-row md:items-center gap-2 mb-1">
-                        <h4 className="text-base font-bold text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                            {req.title}
-                        </h4>
-                        <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-mono font-bold text-slate-400 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded">{req.id}</span>
+            {filteredRequests.map(req => {
+                const Icon = getTypeIcon(req.type);
+                return (
+                  <div 
+                    key={req.id}
+                    onClick={() => onViewRequest && onViewRequest(req.id)}
+                    className="p-5 border-b border-slate-100 dark:border-white/5 cursor-pointer transition-all hover:bg-slate-50 dark:hover:bg-white/5 group"
+                  >
+                    <div className="flex items-start gap-5">
+                      {/* Left: Icon & ID */}
+                      <div className="flex flex-col items-center gap-2">
+                          <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 shadow-sm border border-slate-200 dark:border-white/10 group-hover:scale-105 transition-transform group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 group-hover:text-blue-600">
+                                <Icon size={20} />
+                          </div>
+                          <span className="text-[10px] font-mono font-bold text-slate-400">{req.id}</span>
+                      </div>
+
+                      {/* Middle: Content */}
+                      <div className="flex-1 min-w-0 pt-1">
+                        <div className="flex flex-col md:flex-row md:items-baseline gap-2 mb-1.5">
+                            <h4 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                {getCategoryLabel(req.type)}
+                            </h4>
+                            <span className="hidden md:inline text-slate-300 dark:text-slate-700">•</span>
+                            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-md">
+                                {req.requester.name} — {req.requester.unit}
+                            </span>
                         </div>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
-                        <span className="flex items-center gap-1.5 font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
-                            <User size={12} /> {req.requester.name}
-                        </span>
-                        <span className="flex items-center gap-1.5 opacity-80 font-medium">
-                            <Clock size={12} /> {formatDateTime(req.submittedDate)}
-                        </span>
+                        
+                        <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-1 mb-2 font-medium">
+                            {req.summary}
+                        </p>
+
+                        <div className="flex items-center gap-4 text-xs text-slate-400">
+                            <span className="flex items-center gap-1.5 font-mono">
+                                <Clock size={12} /> {formatDateTime(req.submittedDate)}
+                            </span>
+                        </div>
+                      </div>
+
+                      {/* Right: Status */}
+                      <div className="flex items-center gap-4 self-center">
+                          <Badge variant={req.status === 'Approved' ? 'success' : req.status === 'Pending' ? 'warning' : 'error'}>
+                            {req.status.toUpperCase()}
+                          </Badge>
+                          <ChevronRight size={20} className="text-slate-300 group-hover:text-blue-500 transition-colors" />
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                      <Badge variant={req.status === 'Approved' ? 'success' : req.status === 'Pending' ? 'warning' : 'error'}>
-                        {req.status}
-                      </Badge>
-                      <ChevronRight size={20} className="text-slate-300 group-hover:text-blue-500 transition-colors" />
-                  </div>
-                </div>
-              </div>
-            ))}
+            )})}
             {filteredRequests.length === 0 && (
                 <div className="p-20 text-center flex flex-col items-center">
                     <div className="w-16 h-16 bg-slate-50 dark:bg-white/5 rounded-full flex items-center justify-center text-slate-300 dark:text-slate-700 mb-4">

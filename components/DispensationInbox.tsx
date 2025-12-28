@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { LayoutList, Kanban, Grid, Wifi, Shield, FileText, MoreHorizontal, Clock, User } from 'lucide-react';
 import Inbox from './Inbox';
@@ -14,6 +15,15 @@ const DispensationInbox: React.FC<DispensationInboxProps> = () => {
           case 'INTERNET': return <Wifi size={18} />;
           case 'USB': return <FileText size={18} />;
           default: return <Shield size={18} />;
+      }
+  };
+
+  const getStandardTitle = (type: string) => {
+      switch(type) {
+          case 'INTERNET': return 'Internet Connectivity Request';
+          case 'USB': return 'Removable Media Access';
+          case 'ACCESS': return 'Physical Access Control';
+          default: return 'Dispensation Request';
       }
   };
 
@@ -77,9 +87,9 @@ const DispensationInbox: React.FC<DispensationInboxProps> = () => {
                                   </button>
                               </div>
 
-                              {/* Content */}
+                              {/* Content - Replaced Title with Standard Type */}
                               <div className="mb-6">
-                                  <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-1 line-clamp-1">{item.title}</h4>
+                                  <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-1 line-clamp-1">{getStandardTitle(item.type)}</h4>
                                   <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-mono">
                                       <span>{item.id}</span>
                                       <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>

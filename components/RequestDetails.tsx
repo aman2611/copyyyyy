@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { 
   ArrowLeft, Clock, Laptop, Shield, FileText, Paperclip, 
   User, CheckCircle, Fingerprint, QrCode, XCircle, RefreshCw, Maximize2,
-  MapPin, Briefcase, Calendar, Activity, Mail, Phone, Lock
+  MapPin, Briefcase, Calendar, Activity, Mail, Phone, Lock, Hash
 } from 'lucide-react';
 import { RequestItem } from '../utils/types';
 import { INITIAL_MOCK_REQUESTS, INITIAL_USERS } from '../utils/constants';
@@ -132,6 +132,15 @@ const RequestDetails: React.FC<RequestDetailsProps> = ({ requestId, onBack }) =>
     };
   };
 
+  const getStandardHeader = (type: string) => {
+      switch(type) {
+          case 'Laptop': return 'Laptop Requisition';
+          case 'Dispensation': return 'Security Dispensation';
+          case 'Policy': return 'Policy Compliance Check';
+          default: return 'System Request';
+      }
+  };
+
   if (!request) return <div className="p-8 text-center text-slate-500">Loading Request Information...</div>;
 
   const requesterProfile = getRequesterDetails(request);
@@ -155,9 +164,8 @@ const RequestDetails: React.FC<RequestDetailsProps> = ({ requestId, onBack }) =>
             >
                 <ArrowLeft size={20} className="text-slate-600 dark:text-slate-300" />
             </button>
-            <div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Request Details</h2>
-                <div className="text-sm text-slate-500 dark:text-slate-400 font-mono">ID: {requestId}</div>
+            <div className="flex items-center gap-2 text-sm font-mono text-slate-500 dark:text-slate-400">
+                <Hash size={14} /> {requestId}
             </div>
         </div>
 
@@ -172,9 +180,11 @@ const RequestDetails: React.FC<RequestDetailsProps> = ({ requestId, onBack }) =>
                     </div>
                     <div>
                         <div className="flex items-center gap-3">
-                            <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight">{request.title}</h3>
+                            <h3 className="text-xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase">
+                                {getStandardHeader(request.type)}
+                            </h3>
                             <Badge variant={request.status === 'Approved' ? 'success' : request.status === 'Rejected' ? 'error' : 'warning'}>
-                                {request.status}
+                                {request.status.toUpperCase()}
                             </Badge>
                         </div>
                         <div className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-3 mt-1 font-medium">

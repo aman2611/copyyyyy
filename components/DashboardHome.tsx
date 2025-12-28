@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Laptop, FileText, HardDrive, Activity, ArrowLeft, Plus, Zap, Box, Layers, RefreshCcw, Wifi, Shield } from 'lucide-react';
+import { Laptop, FileText, HardDrive, Activity, ArrowLeft, Plus, Zap, Box, Layers, RefreshCcw, Wifi, Shield, ArrowRight } from 'lucide-react';
 import DataTable, { ColumnDef } from './DataTable';
 import Badge from './Badge';
 import { ModuleConfig } from '../utils/types';
@@ -40,7 +40,7 @@ const DashboardHome: React.FC<DashboardHomeProps> = ({ currentModule, workflowSt
      // Normal Data
      if (currentModule.id === 'logistics') {
          const allCards = [
-            { id: 'laptop-request', subId: 'laptop-my-requests', label: 'Asset Fleet', value: '124', sub: '+12% this week', icon: Laptop, bg: 'bg-blue-100 dark:bg-blue-500/10', text: 'text-blue-600 dark:text-blue-400' },
+            { id: 'laptop-request', subId: 'laptop-my-requests', label: 'Asset Fleet', value: '124', sub: 'Active Assignments', icon: Laptop, bg: 'bg-blue-100 dark:bg-blue-500/10', text: 'text-blue-600 dark:text-blue-400' },
             { id: 'dispensation', subId: 'dispensation-my-requests', label: 'Waivers', value: '82', sub: '5 Urgent Actions', icon: FileText, bg: 'bg-green-100 dark:bg-green-500/10', text: 'text-green-600 dark:text-green-400' },
             { id: 'nws-policy', subId: 'nws-library', label: 'Media Control', value: '12', sub: 'Pending Review', icon: HardDrive, bg: 'bg-amber-100 dark:bg-amber-500/10', text: 'text-amber-600 dark:text-amber-400' },
          ];
@@ -167,32 +167,51 @@ const DashboardHome: React.FC<DashboardHomeProps> = ({ currentModule, workflowSt
             </div>
         </div>
 
-        {/* Stats Grid */}
+        {/* Stats Grid - REDESIGNED */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {getResourceCards().map((stat, i) => (
             <div 
             key={i} 
             onClick={() => stat.subId ? onNavigate(stat.id, stat.subId) : null}
-            className={`p-8 rounded-[2.5rem] border hover:shadow-2xl hover:scale-[1.02] transition-all cursor-pointer group shadow-sm flex flex-col justify-between h-48 relative overflow-hidden ${
+            className={`p-6 rounded-[2rem] border transition-all duration-500 cursor-pointer group shadow-sm hover:shadow-xl hover:scale-[1.02] flex flex-col justify-between h-52 relative overflow-hidden ${
                 simulateEmpty 
                 ? 'bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 grayscale opacity-80' 
-                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-white/5'
+                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10 hover:border-blue-300 dark:hover:border-blue-500/50'
             }`}
             >
                 {simulateEmpty && <div className="absolute inset-0 bg-slate-100/50 dark:bg-black/50 backdrop-blur-[1px] z-0"></div>}
                 
+                {/* Decorative Background Watermark */}
+                <div className="absolute -right-6 -bottom-6 opacity-[0.03] dark:opacity-[0.05] transform rotate-12 group-hover:scale-110 group-hover:-rotate-12 transition-all duration-700 pointer-events-none text-slate-900 dark:text-white">
+                    {React.createElement(stat.icon as any, { size: 160 })}
+                </div>
+
                 <div className="relative z-10 flex justify-between items-start">
-                    <div className={`p-4 rounded-2xl ${stat.bg} ${stat.text} shadow-inner transition-transform group-hover:scale-110`}>
-                        {React.createElement(stat.icon as any, { size: 32 })}
+                    <div className={`p-3.5 rounded-2xl ${stat.bg} ${stat.text} shadow-inner transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+                        {React.createElement(stat.icon as any, { size: 28 })}
                     </div>
                     {simulateEmpty && (
                         <div className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700"></div>
                     )}
+                    {!simulateEmpty && (
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-x-2 group-hover:translate-x-0">
+                            <div className="p-2 rounded-full bg-slate-50 dark:bg-white/10 text-slate-400 hover:text-blue-500">
+                                <ArrowRight size={16} />
+                            </div>
+                        </div>
+                    )}
                 </div>
                 
-                <div className="relative z-10">
-                    <h3 className={`text-5xl font-black tracking-tighter ${simulateEmpty ? 'text-slate-300 dark:text-slate-700' : 'text-slate-900 dark:text-white'}`}>{stat.value}</h3>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-3">{stat.label}</p>
+                <div className="relative z-10 mt-auto">
+                    <h3 className={`text-5xl font-black tracking-tighter mb-1 ${simulateEmpty ? 'text-slate-300 dark:text-slate-700' : 'text-slate-900 dark:text-white'}`}>
+                        {stat.value}
+                    </h3>
+                    <div className="flex flex-col">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{stat.label}</p>
+                        <p className={`text-xs font-bold mt-1 truncate ${simulateEmpty ? 'text-slate-300' : 'text-slate-500 dark:text-slate-400'}`}>
+                            {stat.sub}
+                        </p>
+                    </div>
                 </div>
             </div>
         ))}
